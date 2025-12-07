@@ -26,7 +26,13 @@ extension UI.Navigation.Destination: Equatable {
     case (.learningCapacity, .learningCapacity): true
     case (.customization, .customization): true
     case (.achievement, .achievement): true
-    case (.home, _), (.onboarding, _), (.getName, _), (.levels, _), (.learningCapacity, _), (.customization, _), (.achievement, _):
+    case (.home, _),
+      (.onboarding, _),
+      (.getName, _),
+      (.levels, _),
+      (.learningCapacity, _),
+      (.customization, _),
+      (.achievement, _):
       false
     }
   }
