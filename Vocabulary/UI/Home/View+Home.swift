@@ -3,70 +3,108 @@ import SwiftUI
 extension UI.Home {
   struct View: Screen {
     // MARK: - Properties
-    @State private var arrowOffset: CGFloat = 0
+    @StateObject private var viewModel = ViewModel()
     
     // MARK: - Body
-      var body: some Screen {
-      VStack {
-        Spacer()
+    var body: some Screen {
+      ZStack(alignment: .top) {
+        Color.vocabBackground
+          .ignoresSafeArea()
         
-        makeWelcomeView()
+        GeometryReader { geometry in
+          ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack(spacing: 0) {
+              makeWelcomePage()
+                .frame(height: geometry.size.height)
+                .id(0)
+                .onAppear {
+                  viewModel.updatePageNumber(0)
+                }
+              
+              ForEach(Array(viewModel.vocabularyWords.enumerated()), id: \.element.id) { index, word in
+                VocabularyCard(word: word)
+                  .frame(height: geometry.size.height)
+                  .id(index + 1)
+                  .onAppear {
+                    viewModel.updatePageNumber(index + 1)
+                  }
+              }
+              
+              makeContentPage()
+                .frame(height: geometry.size.height)
+                .id(viewModel.vocabularyWords.count + 1)
+                .onAppear {
+                  viewModel.updatePageNumber(viewModel.vocabularyWords.count + 1)
+                }
+            }
+          }
+          .scrollTargetBehavior(.paging)
+          
+        }
         
-        Spacer()
-        
-        makeScrollIndicator()
+        // Progress bar in header
+        DailyProgressBar(
+          wordsLearned: $viewModel.wordsLearnedToday,
+          dailyGoal: viewModel.dailyGoal
+        )
       }
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .background(Color.vocabBackground.ignoresSafeArea())
+      .ignoresSafeArea()
       .navigationBarHidden(true)
     }
     
     // MARK: - Views
-    private func makeWelcomeView() -> some Screen {
-      VStack(spacing: VocabSpacing.spacing2) {
-        Text("📚")
-          .font(.system(size: 80))
+    private func makeWelcomePage() -> some Screen {
+      VStack(spacing: 0) {
+        Spacer()
         
-        Text("Welcome To\nVocabulary")
+        VStack(spacing: VocabSpacing.spacing2) {
+          Text("📚")
+            .font(.system(size: 80))
+          
+          Text("Welcome To\nVocabulary")
+            .font(VocabTypography.largeTitle)
+            .fontWeight(.bold)
+            .foregroundColor(.vocabTextPrimary)
+          
+          Text("Your journey to 10,000 words starts here")
+            .font(VocabTypography.body)
+            .foregroundColor(.vocabTextSecondary)
+        }
+        .multilineTextAlignment(.center)
+        
+        Spacer()
+        
+        SwipeUpIndicator()
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .padding(VocabSpacing.spacing2)
+    }
+    
+    private func makeContentPage() -> some Screen {
+      VStack(spacing: VocabSpacing.spacing3) {
+        Spacer()
+        
+        Image(systemName: "checkmark.circle.fill")
+          .font(.system(size: 100))
+          .foregroundColor(.vocabSuccess)
+        
+        Text("Goal Complete! 🎉")
           .font(VocabTypography.largeTitle)
           .fontWeight(.bold)
           .foregroundColor(.vocabTextPrimary)
           .multilineTextAlignment(.center)
         
-        Text("Your journey to 10,000 words starts here")
+        Text("You've completed all the steps!")
           .font(VocabTypography.body)
           .foregroundColor(.vocabTextSecondary)
           .multilineTextAlignment(.center)
+        
+        Spacer()
       }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .padding(VocabSpacing.spacing2)
     }
     
-    private func makeScrollIndicator() -> some Screen {
-      VStack(spacing: VocabSpacing.spacing1) {
-        Text("Swipe up to continue")
-          .font(VocabTypography.caption)
-          .foregroundColor(.vocabTextSecondary)
-        
-        // Flowing swipe-up animation
-        ZStack {
-          ForEach(0..<3, id: \.self) { index in
-            Image(systemName: "chevron.compact.up")
-              .font(.system(size: 28, weight: .bold))
-              .foregroundColor(.vocabPrimary)
-              .opacity(max(0, 1.0 - (arrowOffset + CGFloat(index * 12)) / 40.0))
-              .offset(y: CGFloat(index * 12) - arrowOffset)
-          }
-        }
-        .frame(height: 60)
-      }
-      .padding(.bottom, VocabSpacing.spacing3)
-      .onAppear {
-        withAnimation(
-          Animation.linear(duration: 1.2).repeatForever(autoreverses: false)
-        ) {
-          arrowOffset = 40
-        }
-      }
-    }
   }
 }
 
