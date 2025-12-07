@@ -9,14 +9,15 @@ extension UI.Onboarding {
     
     var body: some Screen {
       NavigationStack(path: $navigationManager.path) {
-        VStack(spacing: 16) {
+        VStack(spacing: VocabSpacing.spacing2) {
           Spacer()
           makeLottieView()
           makeTextTitleView()
           Spacer()
           makeContiueButton()
         }
-        .background(Color.yellow.opacity(0.2))
+        .padding(VocabSpacing.spacing2)
+        .background(Color.vocabBackground.ignoresSafeArea())
         .navigationDestination(for: UI.Navigation.Destination.self) { destination in
           UI.Navigation.ViewProvider(destination: destination)
         }
@@ -26,28 +27,30 @@ extension UI.Onboarding {
     private func makeLottieView() -> some Screen {
       LottieView(animation: .named(.knowledgeIcon))
         .playing(loopMode: .autoReverse)
+        .frame(width: 200, height: 200)
     }
     
     private func makeTextTitleView() -> some Screen {
-      VStack(alignment: .center, spacing: 8) {
-        Text("Expand Your Vocabulary \n in 1 minute a day")
-          .font(.title3)
-          .fontWeight(.heavy)
+      VStack(alignment: .center, spacing: VocabSpacing.spacing1) {
+        Text("Expand Your Vocabulary\nin 1 minute a day")
+          .font(VocabTypography.title1)
+          .fontWeight(.bold)
+          .foregroundColor(.vocabTextPrimary)
           
-        Text("Learn 10,000+ words with a new daily hapit that takes just 1 minute.")
-          .font(.body)
+        Text("Learn 10,000+ words with a new daily habit that takes just 1 minute.")
+          .font(VocabTypography.body)
+          .foregroundColor(.vocabTextSecondary)
       }
       .multilineTextAlignment(.center)
+      .padding(.horizontal, VocabSpacing.spacing2)
     }
     
     private func makeContiueButton() -> some Screen {
       Button("Continue") {
         navigationManager.push(.getName)
       }
-      .buttonStyle(
-        UI.SharedComponents.Button.primary
-      )
-      .padding()
+      .buttonStyle(UI.SharedComponents.Button.primary)
+      .padding(VocabSpacing.spacing2)
     }
   }
 }

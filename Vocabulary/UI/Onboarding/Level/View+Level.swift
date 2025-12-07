@@ -9,7 +9,7 @@ extension UI.Onboarding.Levels {
     
     // MARK: - Body
     var body: some Screen {
-      VStack(spacing: 32) {
+      VStack(spacing: VocabSpacing.spacing4) {
         Spacer()
         
         makeQuestionView()
@@ -19,41 +19,45 @@ extension UI.Onboarding.Levels {
         
         makeContinueButton()
       }
-      .padding()
+      .padding(VocabSpacing.spacing2)
       .navigationBarHidden(true)
-      .background(Color.yellow.opacity(0.2))
-      .ignoresSafeArea()
+      .background(Color.vocabBackground.ignoresSafeArea())
     }
     
     // MARK: - Views
     private func makeQuestionView() -> some Screen {
-      VStack(spacing: 8) {
+      VStack(spacing: VocabSpacing.spacing1) {
         Text("📚")
-          .font(.system(size: 60))
+          .font(.system(size: 80))
         
         Text("What's your\nvocabulary level?")
-          .font(.title2)
-          .fontWeight(.bold)
+          .font(VocabTypography.title1)
+          .foregroundColor(.vocabTextPrimary)
+          .multilineTextAlignment(.center)
         
         Text("This helps us personalize your learning")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
+          .font(VocabTypography.body)
+          .foregroundColor(.vocabTextSecondary)
       }
       .multilineTextAlignment(.center)
     }
     
     private func makeLevelsView() -> some Screen {
-      VStack(spacing: 12) {
+      VStack(spacing: VocabSpacing.spacing2) {
         ForEach(viewModel.levels) { level in
-          LevelButton(
-            level: level,
+          UI.SharedComponents.SelectionButton(
+            icon: getLevelIcon(for: level),
+            title: level.title,
+            subtitle: level.description,
             isSelected: viewModel.isSelected(level)
           ) {
-            viewModel.selectLevel(level)
+            withAnimation(VocabAnimation.spring) {
+              viewModel.selectLevel(level)
+            }
           }
         }
       }
-      .padding(.horizontal)
+      .padding(.horizontal, VocabSpacing.spacing2)
     }
     
     private func makeContinueButton() -> some Screen {
@@ -63,7 +67,8 @@ extension UI.Onboarding.Levels {
       .buttonStyle(UI.SharedComponents.Button.primary)
       .disabled(!viewModel.isLevelSelected)
       .opacity(viewModel.isLevelSelected ? 1.0 : 0.5)
-      .padding()
+      .animation(VocabAnimation.quick, value: viewModel.isLevelSelected)
+      .padding(VocabSpacing.spacing2)
     }
     
     // MARK: - Actions
@@ -73,45 +78,17 @@ extension UI.Onboarding.Levels {
       }
       navigationManager.push(.learningCapacity)
     }
-  }
-}
-
-
-// MARK: - Level Button Component
-extension UI.Onboarding.Levels {
-  struct LevelButton: Screen {
-    // MARK: - Properties
-    let level: ViewModel.Level
-    let isSelected: Bool
-    let action: Action
     
-    // MARK: - Body
-    var body: some Screen {
-      Button(action: action) {
-        HStack(spacing: 16) {
-          VStack(alignment: .leading, spacing: 4) {
-            Text(level.title)
-              .font(.headline)
-              .foregroundColor(isSelected ? .white : .primary)
-            
-            Text(level.description)
-              .font(.caption)
-              .foregroundColor(isSelected ? .white.opacity(0.9) : .secondary)
-          }
-          
-          Spacer()
-          
-          Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-            .font(.title3)
-            .foregroundColor(isSelected ? .white : .gray)
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.blue : Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+    // MARK: - Helper Methods
+    private func getLevelIcon(for level: ViewModel.Level) -> String {
+      switch level {
+      case .beginner:
+        return "book.fill"
+      case .intermediate:
+        return "books.vertical.fill"
+      case .advanced:
+        return "graduationcap.fill"
       }
-      .buttonStyle(.plain)
     }
   }
 }

@@ -21,6 +21,8 @@ extension UI.Navigation {
         UI.Onboarding.LearningCapacity.View()
       case .customization:
         UI.Onboarding.Customization.View()
+      case .achievement:
+        UI.Onboarding.Achievement.View()
       }
     }
   }

@@ -12,7 +12,7 @@ extension UI.Onboarding.GetName {
     
     // MARK: - Body
     var body: some Screen {
-      VStack(spacing: 24) {
+      VStack(spacing: VocabSpacing.spacing3) {
         Spacer()
         
         makeHeaderView()
@@ -22,10 +22,9 @@ extension UI.Onboarding.GetName {
         
         makeContinueButton()
       }
-      .padding()
+      .padding(VocabSpacing.spacing2)
       .navigationBarHidden(true)
-      .background(Color.yellow.opacity(0.2))
-      .ignoresSafeArea()
+      .background(Color.vocabBackground.ignoresSafeArea())
       .onAppear {
         viewModel.loadStoredName()
         isTextFieldFocused = true
@@ -34,42 +33,48 @@ extension UI.Onboarding.GetName {
     
     // MARK: - Views
     private func makeHeaderView() -> some Screen {
-      VStack(spacing: 12) {
+      VStack(spacing: VocabSpacing.spacing1) {
         Text("👋")
-          .font(.system(size: 60))
+          .font(.system(size: 80))
         
         Text("What's your name?")
-          .font(.title2)
+          .font(VocabTypography.title1)
           .fontWeight(.bold)
+          .foregroundColor(.vocabTextPrimary)
         
         Text("Let's personalize your experience")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
+          .font(VocabTypography.body)
+          .foregroundColor(.vocabTextSecondary)
       }
       .multilineTextAlignment(.center)
     }
     
     private func makeNameInputView() -> some Screen {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: VocabSpacing.spacing1) {
         TextField("Enter your name", text: $viewModel.name)
           .textFieldStyle(.plain)
-          .font(.title3)
-          .padding()
-          .background(Color.white)
-          .cornerRadius(12)
-          .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+          .font(VocabTypography.title3)
+          .padding(VocabSpacing.spacing2)
+          .background(Color.vocabCardBackground)
+          .cornerRadius(VocabRadius.medium)
+          .shadow(
+            color: VocabShadow.small.color,
+            radius: VocabShadow.small.radius,
+            x: 0,
+            y: VocabShadow.small.y
+          )
           .focused($isTextFieldFocused)
           .autocorrectionDisabled()
           .textInputAutocapitalization(.words)
         
         if let errorMessage = viewModel.errorMessage {
           Text(errorMessage)
-            .font(.caption)
-            .foregroundColor(.red)
-            .padding(.leading, 4)
+            .font(VocabTypography.caption)
+            .foregroundColor(.vocabError)
+            .padding(.leading, VocabSpacing.spacing0_5)
         }
       }
-      .padding(.horizontal)
+      .padding(.horizontal, VocabSpacing.spacing2)
     }
     
     private func makeContinueButton() -> some Screen {
@@ -79,7 +84,7 @@ extension UI.Onboarding.GetName {
       .buttonStyle(UI.SharedComponents.Button.primary)
       .disabled(!viewModel.isNameValid)
       .opacity(viewModel.isNameValid ? 1.0 : 0.5)
-      .padding()
+      .padding(VocabSpacing.spacing2)
     }
     
     // MARK: - Actions

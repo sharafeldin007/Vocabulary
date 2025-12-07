@@ -9,8 +9,8 @@ extension String {
   static let hasCompletedOnboardingKey = "hasCompletedOnboarding"
 }
 
-// MARK: - User Defaults Helper
-struct UserDefaults {
+// MARK: - App Settings Helper
+struct AppSettings {
   @AppStorage(.userNameKey) static var userName: String = ""
   @AppStorage(.userVocabularyLevelKey) static var userVocabularyLevel: String = ""
   @AppStorage(.wordsPerWeekKey) static var wordsPerWeek: Int = 0

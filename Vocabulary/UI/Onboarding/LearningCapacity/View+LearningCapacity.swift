@@ -10,7 +10,7 @@ extension UI.Onboarding.LearningCapacity {
     
     // MARK: - Body
     var body: some Screen {
-      VStack(spacing: 32) {
+      VStack(spacing: VocabSpacing.spacing4) {
         Spacer()
         
         makeLottieView()
@@ -21,10 +21,9 @@ extension UI.Onboarding.LearningCapacity {
         
         makeContinueButton()
       }
-      .padding()
+      .padding(VocabSpacing.spacing2)
       .navigationBarHidden(true)
-      .background(Color.yellow.opacity(0.2))
-      .ignoresSafeArea()
+      .background(Color.vocabBackground.ignoresSafeArea())
     }
     
     // MARK: - Views
@@ -35,30 +34,32 @@ extension UI.Onboarding.LearningCapacity {
     }
     
     private func makeQuestionView() -> some Screen {
-      VStack(spacing: 12) {
-        Text("How many words do you\nwant to learn per week?")
-          .font(.title2)
-          .fontWeight(.bold)
+      VStack(spacing: VocabSpacing.spacing1) {
+        Text("How many words do you \n want to learn per week?")
+          .font(VocabTypography.title1)
+          .foregroundColor(.vocabTextPrimary)
         
         Text("Choose a pace that works for you")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
+          .font(VocabTypography.body)
+          .foregroundColor(.vocabTextSecondary)
       }
       .multilineTextAlignment(.center)
     }
     
     private func makeOptionsView() -> some Screen {
-      VStack(spacing: 16) {
+      VStack(spacing: VocabSpacing.spacing2) {
         ForEach(viewModel.options) { option in
-          CapacityButton(
-            capacity: option,
+          UI.SharedComponents.SelectionButton(
+            emoji: option.emoji,
+            title: option.title,
+            subtitle: option.subtitle,
             isSelected: viewModel.isSelected(option)
           ) {
             viewModel.selectCapacity(option)
           }
         }
       }
-      .padding(.horizontal)
+      .padding(.horizontal, VocabSpacing.spacing2)
     }
     
     private func makeContinueButton() -> some Screen {
@@ -68,7 +69,7 @@ extension UI.Onboarding.LearningCapacity {
       .buttonStyle(UI.SharedComponents.Button.primary)
       .disabled(!viewModel.isCapacitySelected)
       .opacity(viewModel.isCapacitySelected ? 1.0 : 0.5)
-      .padding()
+      .padding(VocabSpacing.spacing2)
     }
     
     // MARK: - Actions
@@ -76,51 +77,7 @@ extension UI.Onboarding.LearningCapacity {
       guard viewModel.saveCapacity() else {
         return
       }
-      
-      // Navigate to next screen
-      // navigationManager.push(.nextDestination)
-    }
-  }
-}
-
-// MARK: - Capacity Button Component
-extension UI.Onboarding.LearningCapacity {
-  struct CapacityButton: Screen {
-    // MARK: - Properties
-    let capacity: ViewModel.WordsPerWeek
-    let isSelected: Bool
-    let action: Action
-    
-    // MARK: - Body
-    var body: some Screen {
-      Button(action: action) {
-        HStack(spacing: 16) {
-          Text(capacity.emoji)
-            .font(.system(size: 40))
-          
-          VStack(alignment: .leading, spacing: 4) {
-            Text(capacity.title)
-              .font(.headline)
-              .foregroundColor(isSelected ? .white : .primary)
-            
-            Text(capacity.subtitle)
-              .font(.caption)
-              .foregroundColor(isSelected ? .white.opacity(0.9) : .secondary)
-          }
-          
-          Spacer()
-          
-          Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-            .font(.title3)
-            .foregroundColor(isSelected ? .white : .gray)
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.blue : Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-      }
-      .buttonStyle(.plain)
+      navigationManager.push(.achievement)
     }
   }
 }
@@ -130,4 +87,5 @@ extension UI.Onboarding.LearningCapacity {
   UI.Onboarding.LearningCapacity.View()
     .environmentObject(UI.Navigation.Manager())
 }
+
 

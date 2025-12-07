@@ -13,5 +13,6 @@ extension UI.Onboarding {
   enum Customization {}
   enum Levels {}
   enum LearningCapacity {}
+  enum Achievement {}
 }
 

@@ -9,7 +9,7 @@ extension UI.Onboarding.Customization {
     
     // MARK: - Body
     var body: some Screen {
-      VStack(spacing: 32) {
+      VStack(spacing: VocabSpacing.spacing4) {
         Spacer()
         
         makeLottieView()
@@ -19,10 +19,9 @@ extension UI.Onboarding.Customization {
         
         makeContinueButton()
       }
-      .padding()
+      .padding(VocabSpacing.spacing2)
       .navigationBarHidden(true)
-      .background(Color.yellow.opacity(0.2))
-      .ignoresSafeArea()
+      .background(Color.vocabBackground.ignoresSafeArea())
     }
     
     // MARK: - Views
@@ -33,18 +32,19 @@ extension UI.Onboarding.Customization {
     }
     
     private func makeContentView() -> some Screen {
-      VStack(spacing: 16) {
+      VStack(spacing: VocabSpacing.spacing2) {
         Text("⚙️")
-          .font(.system(size: 60))
+          .font(.system(size: 80))
         
         Text("Customize Your\nLearning Experience")
-          .font(.title2)
+          .font(VocabTypography.title1)
           .fontWeight(.bold)
+          .foregroundColor(.vocabTextPrimary)
         
         Text("Tailor your vocabulary journey to match your goals and preferences")
-          .font(.body)
-          .foregroundColor(.secondary)
-          .padding(.horizontal)
+          .font(VocabTypography.body)
+          .foregroundColor(.vocabTextSecondary)
+          .padding(.horizontal, VocabSpacing.spacing2)
       }
       .multilineTextAlignment(.center)
     }
@@ -54,12 +54,12 @@ extension UI.Onboarding.Customization {
         handleContinue()
       }
       .buttonStyle(UI.SharedComponents.Button.primary)
-      .padding()
+      .padding(VocabSpacing.spacing2)
     }
     
     // MARK: - Actions
     private func handleContinue() {
-      UserDefaults.hasCompletedOnboarding = true
+//      AppSettings.hasCompletedOnboarding = true
       navigationManager.push(.levels)
     }
   }
