@@ -3,9 +3,8 @@ import SwiftUI
 extension UI.Onboarding.Achievement {
   struct View: Screen {
     // MARK: - Properties
+    @StateObject private var viewModel = ViewModel()
     @EnvironmentObject private var navigationManager: UI.Navigation.Manager
-    @State private var showConfetti = false
-    @State private var scaleAmount: CGFloat = 0.5
     
     // MARK: - Body
     var body: some Screen {
@@ -15,7 +14,7 @@ extension UI.Onboarding.Achievement {
           .ignoresSafeArea()
         
         // Confetti overlay
-        if showConfetti {
+        if viewModel.showConfetti {
           ConfettiView()
         }
         
@@ -34,7 +33,7 @@ extension UI.Onboarding.Achievement {
       }
       .navigationBarHidden(true)
       .onAppear {
-        animateEntrance()
+        viewModel.animateEntrance()
       }
     }
     
@@ -57,7 +56,7 @@ extension UI.Onboarding.Achievement {
         Image(systemName: "star.fill")
           .font(.system(size: 80))
           .foregroundColor(.vocabSuccess)
-          .scaleEffect(scaleAmount)
+          .scaleEffect(viewModel.scaleAmount)
       }
     }
     
@@ -82,14 +81,14 @@ extension UI.Onboarding.Achievement {
       HStack(spacing: VocabSpacing.spacing2) {
         StatCard(
           icon: "book.fill",
-          value: AppSettings.wordsPerWeek,
+          value: viewModel.wordsPerWeek,
           label: "Words/Week",
           color: .vocabPrimary
         )
         
         StatCard(
           icon: "chart.line.uptrend.xyaxis",
-          value: getLevel(),
+          value: viewModel.userLevel,
           label: "Level",
           color: .vocabSecondary
         )
@@ -108,33 +107,8 @@ extension UI.Onboarding.Achievement {
     
     // MARK: - Actions
     private func handleComplete() {
-      // Trigger celebration
-      withAnimation(VocabAnimation.spring) {
-        showConfetti = true
-      }
-      
-      // Mark onboarding as complete
-      AppSettings.hasCompletedOnboarding = true
-      
-      // Navigate to home after delay
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      viewModel.handleComplete {
         navigationManager.push(.home)
-      }
-    }
-    
-    private func animateEntrance() {
-      withAnimation(VocabAnimation.bounce.delay(0.2)) {
-        scaleAmount = 1.0
-      }
-    }
-    
-    private func getLevel() -> Int {
-      let level = AppSettings.userVocabularyLevel
-      switch level {
-      case "Beginner": return 1
-      case "Intermediate": return 5
-      case "Advanced": return 10
-      default: return 1
       }
     }
   }
