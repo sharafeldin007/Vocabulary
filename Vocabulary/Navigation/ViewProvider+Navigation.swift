@@ -9,10 +9,7 @@ extension UI.Navigation {
       case .onboarding:
         UI.Onboarding.View()
       case .home:
-        Text("Home Screen")
-          .font(.largeTitle)
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(Color.green.opacity(0.2))
+        UI.Home.View()
       case .getName:
         UI.Onboarding.GetName.View()
       case .levels:

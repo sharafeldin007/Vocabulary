@@ -11,6 +11,7 @@ extension UI.Onboarding.GetName {
     }
     @Published var isNameValid: Bool = false
     @Published var errorMessage: String?
+    @Published var isWaving = false
     
     // MARK: - Private Properties
     @AppStorage(.userNameKey) private var storedName: String = ""

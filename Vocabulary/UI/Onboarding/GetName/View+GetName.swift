@@ -10,6 +10,7 @@ extension UI.Onboarding.GetName {
     @EnvironmentObject
     private var navigationManager: UI.Navigation.Manager
     
+    
     // MARK: - Body
     var body: some Screen {
       VStack(spacing: VocabSpacing.spacing3) {
@@ -36,6 +37,14 @@ extension UI.Onboarding.GetName {
       VStack(spacing: VocabSpacing.spacing1) {
         Text("👋")
           .font(.system(size: 80))
+          .rotationEffect(.degrees(viewModel.isWaving ? 20 : -20))
+          .animation(
+            Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true),
+            value: viewModel.isWaving
+          )
+          .onAppear {
+            viewModel.isWaving = true
+          }
         
         Text("What's your name?")
           .font(VocabTypography.title1)
